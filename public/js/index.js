@@ -2,17 +2,27 @@ let socket = io();
 
 socket.on('connect', function () {
     console.log('Connected to server');
-
-    // socket.emit('createMessage', {
-    //     from: 'bobross@gmail.com',
-    //     text: 'gottem'
-    // });
-
-    socket.on('newMessage', function (email) {
-        console.log('New message', email);
-    });
 });
 
 socket.on('disconnect', function () {
     console.log('Oops. Server gone down');
+});
+
+socket.on('newMessage', function (message) {
+    console.log('New message', message);
+    let li = $('<li></li>');
+    li.text(`${message.from}: ${message.text}`);
+
+    $('#messages').append(li);
+});
+
+$('#message-form').on('submit', function (e) {
+    e.preventDefault();
+
+    socket.emit('createMessage', {
+        from: 'User',
+        text: $('#message').val()
+    }, function (data) {
+        console.log(data);
+    });
 });
